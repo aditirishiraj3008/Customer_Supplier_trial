@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Basic meta tags for character encoding and responsive viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+    <!-- Link to external CSS stylesheet for customer profile styling -->
     <link rel="stylesheet" href="customer.css">
 </head>
-<body style=" background-color: white;">
+<!-- Inline background color for the page -->
+<body style="background-color: white;">
 
-    <!--Displays the Customer profile-->
+    <!-- PROFILE DISPLAY SECTION -->
+    <!-- Main container for customer profile information -->
     <div class="profile-container">
+        <!-- Styled container with border and background color -->
         <div style="border: 2px rgb(255, 181, 90) solid; border-radius: 5px; padding: 5vh; background-color: rgb(207, 255, 245);">
+            <!-- Profile header -->
             <h2 style="color: rgb(4, 69, 61);">Customer Profile</h2><br>
+            
+            <!-- Profile data fields with span elements that will be populated by JavaScript -->
+            <!-- Each field has an ID that will be targeted by the fetch operation -->
             <p><strong>Role:</strong> <span id="role"></span></p>
             <p><strong>User ID:</strong> <span id="userID"></span></p>
             <p><strong>Name:</strong> <span id="name"></span></p>
@@ -20,26 +29,55 @@
             <p><strong>Address:</strong> <span id="address"></span></p>
         </div>
     </div>
-    <button onclick="window.location.href='suppliers.html'" style="background-color: rgb(4, 112, 76); color: white; padding: 5vh; text-align: center; margin: 0 45vw;">View Suppliers</button>
 
-        <!--Below is where we have our JS code-->
+    <!-- NAVIGATION BUTTON -->
+    <!-- Button to navigate to suppliers page -->
+    <!-- Styled with inline CSS for color and positioning -->
+    <button onclick="window.location.href='suppliers.html'" 
+            style="background-color: rgb(4, 112, 76); color: white; padding: 5vh; text-align: center; margin: 0 45vw;">
+        View Suppliers
+    </button>
+
+    <!-- JAVASCRIPT SECTION -->
     <script>
-        fetch("http://127.0.0.1:5000/profile")//request sent to backend
-          .then(response => response.json()) //fetching from backend
+        /**
+         * PROFILE DATA FETCHING SCRIPT
+         * Flow:
+         * 1. Browser makes GET request to /profile endpoint when page loads
+         * 2. Backend processes request and returns JSON data
+         * 3. Frontend receives response and updates DOM elements
+         * 4. Any errors are caught and displayed to user
+         */
+        
+        // Fetch profile data from backend API endpoint
+        fetch("http://127.0.0.1:5000/profile") // Sends GET request to Flask backend
+          .then(response => {
+              // Convert response to JSON format
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.json();
+          })
           .then(data => {
-            document.getElementById("role").textContent = data.role;
-            document.getElementById("userID").textContent = data.userID;
-            document.getElementById("name").textContent = data.name;
-            document.getElementById("email").textContent = data.email;
-            document.getElementById("phone").textContent = data.phone;
-            document.getElementById("address").textContent = data.address;
+              // Success case: Update DOM elements with received data
+              document.getElementById("role").textContent = data.role;
+              document.getElementById("userID").textContent = data.userID;
+              document.getElementById("name").textContent = data.name;
+              document.getElementById("email").textContent = data.email;
+              document.getElementById("phone").textContent = data.phone;
+              document.getElementById("address").textContent = data.address;
           })
           .catch(err => {
-            alert("Failed to load profile."); //anycase we have error while loading
-            console.error(err);
+              // Error case: Show alert and log error to console
+              alert("Failed to load profile. Please try again later.");
+              console.error("Error fetching profile:", err);
+              
+              // Optional: You could redirect to login page if unauthorized
+              // if (err.message.includes("401")) {
+              //     window.location.href = "login.html";
+              // }
           });
-      </script>
+    </script>
 
 </body>
 </html>
-
