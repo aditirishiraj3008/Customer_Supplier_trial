@@ -1,77 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supplier Details</title>
+    <!-- Basic page metadata -->
+    <meta charset="UTF-8"> <!-- Character encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive viewport -->
+    <title>Supplier Details</title> <!-- Page title -->
+    
+    <!-- Embedded CSS styles -->
     <style>
+        /* Base page styling */
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: Arial, sans-serif; /* Default font */
+            margin: 0; /* Remove default margin */
+            padding: 20px; /* Add page padding */
+            background-color: #f5f5f5; /* Light gray background */
         }
+        
+        /* Main content container */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1200px; /* Maximum content width */
+            margin: 0 auto; /* Center the container */
         }
+        
+        /* Page heading style */
         h1 {
-            text-align: center;
-            color: #333;
+            text-align: center; /* Center align heading */
+            color: #333; /* Dark gray color */
         }
+        
+        /* Supplier card styling */
         .supplier-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            background-color: white; /* White background */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow */
+            padding: 20px; /* Inner spacing */
+            margin-bottom: 20px; /* Space between cards */
         }
+        
+        /* Supplier name style */
         .supplier-card h2 {
-            margin-top: 0;
-            color: #cc7e00;
+            margin-top: 0; /* Remove default margin */
+            color: #cc7e00; /* Orange-brown color */
         }
+        
+        /* Supplier info item styling */
         .supplier-info {
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* Space between info items */
         }
+        
+        /* Label styling */
         .supplier-info span {
-            font-weight: bold;
+            font-weight: bold; /* Make labels bold */
         }
+        
+        /* Back button styling */
         .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 8px 16px;
-            background-color: #0b6c64;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
+            display: inline-block; /* Allow margin/padding */
+            margin-bottom: 20px; /* Space below button */
+            padding: 8px 16px; /* Button padding */
+            background-color: #0b6c64; /* Dark teal color */
+            color: white; /* White text */
+            text-decoration: none; /* Remove underline */
+            border-radius: 4px; /* Slightly rounded corners */
         }
     </style>
 </head>
 <body>
+    <!-- Main page container -->
     <div class="container">
+        <!-- Navigation back to profile -->
         <a href="profile.html" class="back-btn">Back to Profile</a>
+        
+        <!-- Page heading -->
         <h1>Supplier Details</h1>
+        
+        <!-- Dynamic container where supplier cards will be inserted -->
         <div id="suppliers-container"></div> 
     </div>
 
+    <!-- JavaScript for dynamic content loading -->
     <script>
+        /**
+         * SUPPLIERS PAGE FUNCTIONALITY
+         * 
+         * Data Flow:
+         * 1. Page loads and DOMContentLoaded event triggers
+         * 2. Fetch request sent to /suppliers endpoint
+         * 3. Backend returns supplier data
+         * 4. Frontend processes response and creates supplier cards
+         * 5. Cards are inserted into the DOM
+         * 
+         * Error Handling:
+         * - Network errors
+         * - Empty supplier list
+         * - Backend errors
+         */
+        
+        // Wait for DOM to be fully loaded before executing
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Fetch supplier data from backend API
                 const response = await fetch('http://127.0.0.1:5000/suppliers');
+                
+                // Parse JSON response
                 const data = await response.json();
                 
+                // Check if request was successful
                 if (data.status === 'success') {
                     const container = document.getElementById('suppliers-container');
                     
+                    // Handle empty supplier list
                     if (data.suppliers.length === 0) {
                         container.innerHTML = '<p>No suppliers found.</p>';
                         return;
                     }
                     
+                    // Create and append supplier cards for each supplier
                     data.suppliers.forEach(supplier => {
                         const card = document.createElement('div');
                         card.className = 'supplier-card';
                         
+                        // Populate card with supplier data
                         card.innerHTML = `
                             <h2>${supplier.name}</h2>
                             <div class="supplier-info">
@@ -88,14 +137,22 @@
                             </div>
                         `;
                         
+                        // Add card to container
                         container.appendChild(card);
                     });
                 } else {
+                    // Handle backend errors
                     alert('Error fetching suppliers: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
+                // Handle network/parsing errors
                 console.error('Error:', error);
-                alert('Failed to fetch suppliers');
+                alert('Failed to fetch suppliers. Please try again later.');
+                
+                /* Potential enhancements:
+                   - Add retry button
+                   - Show more user-friendly error message
+                   - Add loading spinner during fetch */
             }
         });
     </script>
