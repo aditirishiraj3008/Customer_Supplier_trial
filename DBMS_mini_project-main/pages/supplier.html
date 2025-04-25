@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .supplier-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .supplier-card h2 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .supplier-info {
+            margin-bottom: 10px;
+        }
+        .supplier-info span {
+            font-weight: bold;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="profile.html" class="back-btn">Back to Profile</a>
+        <h1>Supplier Details</h1>
+        <div id="suppliers-container"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/suppliers');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const container = document.getElementById('suppliers-container');
+                    
+                    if (data.suppliers.length === 0) {
+                        container.innerHTML = '<p>No suppliers found.</p>';
+                        return;
+                    }
+                    
+                    data.suppliers.forEach(supplier => {
+                        const card = document.createElement('div');
+                        card.className = 'supplier-card';
+                        
+                        card.innerHTML = `
+                            <h2>${supplier.name}</h2>
+                            <div class="supplier-info">
+                                <span>ID:</span> ${supplier.userID}
+                            </div>
+                            <div class="supplier-info">
+                                <span>Email:</span> ${supplier.email}
+                            </div>
+                            <div class="supplier-info">
+                                <span>Phone:</span> ${supplier.phone}
+                            </div>
+                            <div class="supplier-info">
+                                <span>Address:</span> ${supplier.address || 'Not available'}
+                            </div>
+                        `;
+                        
+                        container.appendChild(card);
+                    });
+                } else {
+                    alert('Error fetching suppliers: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch suppliers');
+            }
+        });
+    </script>
+</body>
+</html>
